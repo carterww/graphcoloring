@@ -1,27 +1,16 @@
-#ifndef _INPUT_H_
-#define _INPUT_H_
+#ifndef INPUT_H
+#define INPUT_H
 
-#define READ_BUFFER_SIZE 256
+#include <fstream>
+#include <string>
 
-#include <stdio.h>
-#include <stdlib.h>
 
-/* Graph structure
- * num_colors: number of colors
- * num_vertices: number of vertices
- * adj_matrix: adjacency matrix
+#include "graph.h"
+
+/* Add edges and number of vertices to graph obj
+ * from file. Returns 0 on success, something else
+ * otherwise. Puts number of colors in k.
  */
-typedef struct {
-    unsigned int num_colors;
-    unsigned int num_vertices;
-    char **adj_matrix;
-} graph;
+int read_graph(std::ifstream &filename, Graph &graph, int &k);
 
-/* Read graph from file
- * input_file: input file
- * return: graph
- * See input.txt for file format
- */
-graph *read_graph(FILE *input_file);
-
-#endif /* _INPUT_H_ */
+#endif

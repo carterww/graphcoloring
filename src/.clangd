@@ -1,2 +1,2 @@
 CompileFlags:
-  Add: [-xc, -I../include]
+  Add: [-xc++, -I../include]
