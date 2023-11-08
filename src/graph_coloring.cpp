@@ -72,8 +72,7 @@ void GraphColor::print_solution() const {
 
 void GraphColor::color_vertices(int vertex, int num_vertices) {
     // if all colors are assigned, print the solution
-    if (vertex == num_vertices)
-    {
+    if (vertex == num_vertices) {
         Solution *s = new Solution(this->k, this->v_colors);
         if (this->solution == nullptr ||
                 *s < *this->solution) {
@@ -89,11 +88,9 @@ void GraphColor::color_vertices(int vertex, int num_vertices) {
     }
  
     // try all possible combinations of available colors
-    for (int c = 1; c <= k; c++)
-    {
+    for (int c = 1; c <= k; c++) {
         // if it is safe to assign color `c` to vertex `v`
-        if (this->is_safe(vertex, c))
-        {
+        if (this->is_safe(vertex, c)) {
             // assign color `c` to vertex `v`
             this->v_colors[vertex] = c;
  

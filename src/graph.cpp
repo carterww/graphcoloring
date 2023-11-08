@@ -11,6 +11,7 @@ Graph::Graph(int n) {
 }
 
 void Graph::add_edge(int src, int dest) {
+    if (src == dest) return;
     /* Searching these is not super necessary but the list is sorted, and
      * I don't wanna chase bugs with duplicate edges
      */
