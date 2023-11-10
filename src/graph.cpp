@@ -15,10 +15,7 @@ void Graph::add_edge(int src, int dest) {
     /* Searching these is not super necessary but the list is sorted, and
      * I don't wanna chase bugs with duplicate edges
      */
-    if (!std::binary_search (adj[src].begin(), adj[src].end(), dest))
-        this->adj[src].push_back(dest);
-    if (!std::binary_search (adj[dest].begin(), adj[dest].end(), src))
-        this->adj[dest].push_back(src);
+    this->adj[src].push_back(dest);
 }
 
 Graph::Graph(const Graph &g) {

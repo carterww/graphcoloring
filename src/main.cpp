@@ -1,10 +1,13 @@
 #include "graph_coloring.h"
 #include "input.h"
+#include <chrono>
 #include <fstream>
 #include <iostream>
 
+#define DEBUG
+
 int main(int argc, char *argv[]) {
-    std::ifstream input_file("graph.txt");
+    std::ifstream input_file("graph2.txt");
     if (!input_file.is_open()) {
         std::cout << "Error opening file" << std::endl;
         return 1;
@@ -17,13 +20,28 @@ int main(int argc, char *argv[]) {
     }
     std::cout << "Graph read successfully" << std::endl;
 
+    std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
+#ifdef DEBUG
     GraphColor gc = GraphColor(g, k);
+    start = std::chrono::high_resolution_clock::now();
     try {
         gc.color_vertices(0, g.n);
     } catch (const char * c) {
         std::cout << c << std::endl;
     }
+    end = std::chrono::high_resolution_clock::now();
     gc.print_solution();
-
+    std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us" << std::endl;
+    GraphColorGreedy gcg = GraphColorGreedy(g, k);
+    start = std::chrono::high_resolution_clock::now();
+    try {
+        gcg.color_vertices(0, g.n);
+    } catch (const char * c) {
+        std::cout << c << std::endl;
+    }
+    end = std::chrono::high_resolution_clock::now();
+    gcg.print_solution();
+    std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us" << std::endl;
+#endif
     return 0;
 }

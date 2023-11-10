@@ -2,6 +2,7 @@
 #define GRAPH_COLORING_H
 
 #include <vector>
+#include <tuple>
 
 #include "graph.h"
 
@@ -35,6 +36,20 @@ protected:
 
     /* I think this can be same for all coloring techniques */
     bool is_safe(int vertex, int color) const;
+};
+
+class GraphColorGreedy : public GraphColor {
+public:
+    GraphColorGreedy(Graph &graph, int k);
+    virtual ~GraphColorGreedy();
+
+    virtual void color_vertices(int vertex, int num_vertices);
+protected:
+    int max_cost;
+
+    virtual bool is_safe(int vertex, int color);
+private:
+    bool color_vertices_imp(int vertex, int num_vertices);
 };
 
 #endif
