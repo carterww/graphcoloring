@@ -9,8 +9,7 @@
 typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::time_point<Clock> TimePoint;
 
-#define GRAPH_COLOR
-#define GRAPH_COLOR_GREEDY
+#define ALL
 
 void print_time(TimePoint start, TimePoint end);
 
@@ -24,9 +23,12 @@ int main(int argc, char *argv[]) {
     std::cout << "Graph read successfully" << std::endl;
 
     for (int i = 0; i < graphs.size(); i++) {
+        std::cout << "FILE: " << argv[i + 1] << std::endl;
         TimePoint start, end;
 
-        #ifdef GRAPH_COLOR
+        #ifdef ALL
+        std::cout << "Naive graph coloring" << std::endl;
+        std::cout << "------------------------------------------" << std::endl;
         GraphColor gc = GraphColor(*graphs[i], ks[i]);
         start = Clock::now();
         try {
@@ -35,9 +37,12 @@ int main(int argc, char *argv[]) {
         end = Clock::now();
         gc.print_solution();
         print_time(start, end);
+        std::cout << "------------------------------------------" << std::endl;
         #endif
         
-        #ifdef GRAPH_COLOR_GREEDY
+        #ifdef ALL
+        std::cout << "Greedy graph coloring" << std::endl;
+        std::cout << "------------------------------------------" << std::endl;
         GraphColorGreedy gcg = GraphColorGreedy(*graphs[i], ks[i]);
         start = Clock::now();
         try {
@@ -46,8 +51,11 @@ int main(int argc, char *argv[]) {
         end = Clock::now();
         gcg.print_solution();
         print_time(start, end);
+        std::cout << "------------------------------------------" << std::endl;
         #endif
 
+        std::cout << "Heuristic graph coloring" << std::endl;
+        std::cout << "------------------------------------------" << std::endl;
         GraphColorComplete gcc = GraphColorComplete(*graphs[i], ks[i]);
         start = Clock::now();
         try {
@@ -56,6 +64,7 @@ int main(int argc, char *argv[]) {
         end = Clock::now();
         gcc.print_solution();
         print_time(start, end);
+        std::cout << "------------------------------------------" << std::endl;
     }
     return 0;
 }

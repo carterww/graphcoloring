@@ -7,6 +7,7 @@ GraphColor::GraphColor(Graph &graph, int k) {
     this->graph = &graph;
     this->solution = nullptr;
     this->v_colors.resize(graph.n, 0);
+    this->best_solution = (graph.n % k == 0) ? 0 : 1;
 }
 
 GraphColor::~GraphColor() {
@@ -52,7 +53,7 @@ void GraphColor::set_solution(Solution *solution) {
     } else {
         delete solution;
     }
-    if (this->solution->cost == 0) {
+    if (this->solution->cost == this->best_solution) {
         throw "Found most optimal solution early.";
     }
 }

@@ -9,20 +9,11 @@
 
 GraphColorComplete::GraphColorComplete(Graph &graph, int k) : GraphColor(graph, k) {
     this->color_count.resize(k + 1, 0);
-    this->best_solution = (graph.n % k == 0) ? 0 : 1;
     this->v_pick_order.resize(graph.n, 0);
     this->set_pick_order();
 }
 
 void GraphColorComplete::set_pick_order() {
-    if (this->graph->n >= 128) {
-        this->set_pick_order_fast();
-    } else {
-        this->set_pick_order_accurate();
-    }
-}
-
-void GraphColorComplete::set_pick_order_fast() {
     std::vector<std::tuple<int, int>> degrees(this->graph->n, std::make_tuple(0, 0));
     for (int i = 0; i < this->graph->n; i++) {
         std::get<0>(degrees[i]) = this->graph->adj[i].size();
@@ -32,30 +23,6 @@ void GraphColorComplete::set_pick_order_fast() {
     std::sort(degrees.begin(), degrees.end(), std::greater<std::tuple<int, int>>());
     for (int i = 0; i < this->graph->n; i++) {
         this->v_pick_order[i] = std::get<1>(degrees[i]);
-    }
-}
-
-void GraphColorComplete::set_pick_order_accurate() {
-    std::vector<std::tuple<int, int>> degrees(this->graph->n, std::make_tuple(0, 0));
-    for (int i = 0; i < this->graph->n; i++) {
-        std::get<0>(degrees[i]) = this->graph->adj[i].size();
-        std::get<1>(degrees[i]) = i;
-    }
-    /* Sort the vertices by degree */
-    std::make_heap(degrees.begin(), degrees.end(), std::greater<std::tuple<int, int>>());
-    for (int i = 0; i < this->graph->n; i++) {
-        std::pop_heap(degrees.begin(), degrees.end());
-        this->v_pick_order[i] = std::get<1>(degrees.back());
-        degrees.pop_back();
-        for (int u : this->graph->adj[this->v_pick_order[i]]) {
-            for (int j = 0; j < degrees.size(); j++) {
-                if (std::get<1>(degrees[j]) == u) {
-                    std::get<0>(degrees[j])--;
-                    std::push_heap(degrees.begin(), degrees.end());
-                    break;
-                }
-            }
-        }
     }
 }
 

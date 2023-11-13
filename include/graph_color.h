@@ -20,6 +20,8 @@ protected:
     Graph *graph;
     Solution *solution;
     std::vector<int> v_colors;
+    /* Best possible solution given the number of vertices and colors */
+    int best_solution;
 
     virtual bool is_safe(int vertex, int color) const;
     void set_solution(Solution *solution);
