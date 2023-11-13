@@ -10,6 +10,7 @@ class Solution {
 public:
     Solution(int k, const std::vector<int> &v_colors);
 
+    static int get_cost(int k, const std::vector<int> &color_count);
     void print_solution() const;
     bool operator<(const Solution &other) const;
     std::vector<int> v_colors;

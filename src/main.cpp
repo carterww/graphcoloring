@@ -1,6 +1,6 @@
 #include "graph_coloring.h"
+#include "color_graph.h"
 #include "input.h"
-#include "test.h"
 #include <chrono>
 #include <fstream>
 #include <iostream>
@@ -57,7 +57,6 @@ int main(int argc, char *argv[]) {
     end = std::chrono::high_resolution_clock::now();
     cg.print_solution();
     std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us" << std::endl;
-    bool is_correct = cg.is_solution_safe();
-    std::cout << "Solution is " << (is_correct ? "correct" : "incorrect") << std::endl;
+    std::cout << "Solution correct: " << cg.is_solution_correct() << std::endl;
     return 0;
 }

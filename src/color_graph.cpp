@@ -1,61 +1,103 @@
-#include "test.h"
-#include "graph_coloring.h"
-#include "graph.h"
+#include "color_graph.h"
+
+#include <algorithm>
+#include <functional>
+#include <math.h>
 #include <iostream>
+#include <queue>
+#include <tuple>
 
 ColorGraph::ColorGraph(Graph &graph, int k) {
-    this->graph = &graph;
     this->k = k;
+    this->graph = &graph;
     this->solution = nullptr;
     this->v_colors.resize(graph.n, 0);
-    this->vertex_choice_order = new int[graph.n];
-    this->order_vertices();
-    this->v_domain = new char*[graph.n];
-    for (int i = 0; i < graph.n; i++) {
-        this->v_domain[i] = new char[k + 1];
-        this->v_domain[i][0] = 0;
-        for (int j = 1; j <= k; j++) {
-            this->v_domain[i][j] = 1;
+    this->color_count.resize(k + 1, 0);
+    this->best_solution = (graph.n % k == 0) ? 0 : 1;
+    this->v_pick_order.resize(graph.n, 0);
+    this->set_pick_order();
+}
+
+void ColorGraph::set_pick_order() {
+    if (this->graph->n >= 128) {
+        this->set_pick_order_fast();
+    } else {
+        this->set_pick_order_accurate();
+    }
+}
+
+void ColorGraph::set_pick_order_fast() {
+    std::vector<std::tuple<int, int>> degrees(this->graph->n, std::make_tuple(0, 0));
+    for (int i = 0; i < this->graph->n; i++) {
+        std::get<0>(degrees[i]) = this->graph->adj[i].size();
+        std::get<1>(degrees[i]) = i;
+    }
+    /* Sort the vertices by degree */
+    std::sort(degrees.begin(), degrees.end(), std::greater<std::tuple<int, int>>());
+    for (int i = 0; i < this->graph->n; i++) {
+        this->v_pick_order[i] = std::get<1>(degrees[i]);
+    }
+}
+
+void ColorGraph::set_pick_order_accurate() {
+    std::vector<std::tuple<int, int>> degrees(this->graph->n, std::make_tuple(0, 0));
+    for (int i = 0; i < this->graph->n; i++) {
+        std::get<0>(degrees[i]) = this->graph->adj[i].size();
+        std::get<1>(degrees[i]) = i;
+    }
+    /* Sort the vertices by degree */
+    std::make_heap(degrees.begin(), degrees.end(), std::greater<std::tuple<int, int>>());
+    for (int i = 0; i < this->graph->n; i++) {
+        std::pop_heap(degrees.begin(), degrees.end());
+        this->v_pick_order[i] = std::get<1>(degrees.back());
+        degrees.pop_back();
+        for (int u : this->graph->adj[this->v_pick_order[i]]) {
+            for (int j = 0; j < degrees.size(); j++) {
+                if (std::get<1>(degrees[j]) == u) {
+                    std::get<0>(degrees[j])--;
+                    std::push_heap(degrees.begin(), degrees.end());
+                    break;
+                }
+            }
         }
     }
-    this->choice_stack.resize(graph.n * k, std::make_tuple(-1, -1));
-    this->tmp_stack.resize(graph.n, std::make_tuple(-1, -1));
 }
 
 ColorGraph::~ColorGraph() {
     if (this->solution != nullptr)
         delete this->solution;
-    delete[] this->vertex_choice_order;
-    for (int i = 0; i < this->graph->n; i++) {
-        delete[] this->v_domain[i];
-    }
-    delete[] this->v_domain;
 }
 
-/* This can be sorted more efficiently */
-void ColorGraph::order_vertices() {
-    int *degree = new int[this->graph->n];
-    for (int i = 0; i < this->graph->n; i++) {
-        degree[i] = this->graph->adj[i].size();
+bool ColorGraph::is_safe(int vertex, int color) const {
+    for (int u : this->graph->adj[vertex])
+    {
+        if (this->v_colors[u] == color) {
+            return false;
+        }
     }
+ 
+    return true;
+}
 
+
+bool ColorGraph::is_solution_correct() const {
+    if (this->solution == nullptr)
+        return false;
     for (int i = 0; i < this->graph->n; i++) {
-        int max_degree = -1;
-        int max_degree_vertex = -1;
-        for (int j = 0; j < this->graph->n; j++) {
-            if (degree[j] > max_degree) {
-                max_degree = degree[j];
-                max_degree_vertex = j;
+        for (int j : this->graph->adj[i]) {
+            if (this->solution->v_colors[i] == this->solution->v_colors[j]) {
+                return false;
             }
         }
-        this->vertex_choice_order[i] = max_degree_vertex;
-        for (int u : this->graph->adj[max_degree_vertex]) {
-            degree[u]--;
-        }
-        degree[max_degree_vertex] = -1;
     }
+    return true;
+}
 
-    delete[] degree;
+void ColorGraph::print_solution() const {
+    if (this->solution == nullptr)
+        std::cout << "No such a sequence exists." << std::endl;
+    else
+        this->solution->print_solution();
 }
 
 void ColorGraph::set_solution(Solution *solution) {
@@ -67,55 +109,8 @@ void ColorGraph::set_solution(Solution *solution) {
     } else {
         delete solution;
     }
-    if (this->solution->cost == 0) {
+    if (this->solution->cost == this->best_solution) {
         throw "Found most optimal solution early.";
-    }
-}
-
-bool ColorGraph::is_safe(int vertex, int color) {
-    for (int u : this->graph->adj[vertex_choice_order[vertex]]) {
-        if (this->v_colors[u] == color) {
-            return false;
-        }
-    }
- 
-    return true;
-}
-
-bool ColorGraph::is_solution_safe() {
-    for (int i = 0; i < this->graph->n; i++) {
-        for (int j = 0; j < this->graph->adj[i].size(); j++) {
-            if (this->solution->v_colors[i] == this->solution->v_colors[graph->adj[i][j]]) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-void ColorGraph::push_choice(int vertex, int color) {
-    int num_updates = 0;
-    for (int u : this->graph->adj[this->vertex_choice_order[vertex]]) {
-        if (this->v_domain[u][color] == 0)
-            continue;
-        this->v_domain[u][color] = 0;
-        this->choice_stack.push_back(std::make_tuple(u, color));
-        num_updates++;
-    }
-    this->tmp_stack.push_back(std::make_tuple(vertex, num_updates));
-}
-
-void ColorGraph::pop_choice() {
-    auto choice = this->tmp_stack.back();
-    this->tmp_stack.pop_back();
-    int vertex = std::get<0>(choice);
-    int num_updates = std::get<1>(choice);
-    for (int i = 0; i < num_updates; i++) {
-        auto choice = this->choice_stack.back();
-        this->choice_stack.pop_back();
-        int u = std::get<0>(choice);
-        int color = std::get<1>(choice);
-        this->v_domain[u][color] = 1;
     }
 }
 
@@ -125,22 +120,24 @@ void ColorGraph::color_vertices(int vertex, int num_vertices) {
         this->set_solution(s);
         return;
     }
-
-    for (int color = 1; color <= this->k; color++) {
-        if (this->v_domain[vertex_choice_order[vertex]][color] == 0)
-            continue;
-        this->v_colors[this->vertex_choice_order[vertex]] = color;
-        this->push_choice(vertex, color);
+ 
+    std::priority_queue<std::tuple<int, int>, std::vector<std::tuple<int, int>>, std::greater<std::tuple<int, int>>> safe_colors;
+    for (int c = 1; c <= k; c++) {
+        if (this->is_safe(this->v_pick_order[vertex], c)) {
+            this->color_count[c]++;
+            int cost = Solution::get_cost(k, color_count);
+            safe_colors.push(std::make_tuple(cost, c));
+            this->color_count[c]--;
+        }
+    }
+    while (!safe_colors.empty()) {
+        int cost = std::get<0>(safe_colors.top());
+        int color = std::get<1>(safe_colors.top());
+        safe_colors.pop();
+        this->v_colors[this->v_pick_order[vertex]] = color;
+        this->color_count[color]++;
         this->color_vertices(vertex + 1, num_vertices);
-        this->v_colors[this->vertex_choice_order[vertex]] = 0;
-        this->pop_choice();
+        this->color_count[color]--;
+        this->v_colors[this->v_pick_order[vertex]] = 0;
     }
-}
-
-void ColorGraph::print_solution() const {
-    if (this->solution == nullptr) {
-        std::cout << "No such a sequence exists." << std::endl;
-        return;
-    }
-    this->solution->print_solution();
 }

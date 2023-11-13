@@ -13,6 +13,14 @@ Solution::Solution(int k, const std::vector<int> &v_colors) {
     this->calculate_cost();
 }
 
+int Solution::get_cost(int k, const std::vector<int> &color_count) {
+    int cost = 0;
+    for (int i = 1; i < k; i++) {
+        cost += abs(color_count[i] - color_count[i + 1]);
+    }
+    return cost;
+}
+
 void Solution::calculate_cost() {
     this->cost = 0;
     for (int i = 1; i < this->color_use.size() - 1; i++) {
