@@ -12,11 +12,11 @@ public:
 
     void print_solution() const;
     bool operator<(const Solution &other) const;
+    std::vector<int> v_colors;
     int cost;
 protected:
     int k;
     std::vector<int> color_use;
-    std::vector<int> v_colors;
 
     virtual void calculate_cost();
 };
@@ -36,6 +36,7 @@ protected:
 
     /* I think this can be same for all coloring techniques */
     bool is_safe(int vertex, int color) const;
+    void set_solution(Solution *solution);
 };
 
 class GraphColorGreedy : public GraphColor {

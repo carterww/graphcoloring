@@ -1,5 +1,6 @@
 #include <iostream>
 #include "graph_coloring.h"
+#include "colors.h"
 
 Solution::Solution(int k, const std::vector<int> &v_colors) {
     this->k = k;
@@ -34,8 +35,28 @@ void Solution::print_solution() const {
         std::cout << this->color_use[i] << ",";
     }
     std::cout << this->color_use[this->color_use.size() - 1] << ")" << std::endl;
+    std::vector<std::string> color_uses(this->k + 1, "");
+    for (int i = 1; i < color_uses.size(); i++) {
+        color_uses[i] += COLORS[i];
+        int str_len = color_uses[i].length();
+        for (int j = 0; j < 10 - str_len; j++) {
+            color_uses[i] += " ";
+        }
+        color_uses[i] += ": ";
+    }
+    int *has_added = new int[this->k + 1] {0};
     for (int i = 0; i < this->v_colors.size(); i++) {
-        std::cout << i << ": " << this->v_colors[i] << std::endl;
+        if (has_added[this->v_colors[i]] == 0) {
+            color_uses[this->v_colors[i]] += std::to_string(i);
+            has_added[this->v_colors[i]] = 1;
+        } else {
+            color_uses[this->v_colors[i]] += ", ";
+            color_uses[this->v_colors[i]] += std::to_string(i);
+        }
+    }
+    delete[] has_added;
+    for (int i = 1; i < color_uses.size(); i++) {
+        std::cout << color_uses[i] << std::endl;
     }
 }
 
@@ -101,25 +122,30 @@ bool GraphColorGreedy::is_safe(int vertex, int color) {
 
 void GraphColor::print_solution() const {
     if (this->solution == nullptr)
-        std::cout << "No solution found." << std::endl;
+        std::cout << "No such a sequence exists." << std::endl;
     else
         this->solution->print_solution();
+}
+
+void GraphColor::set_solution(Solution *solution) {
+    if (this->solution == nullptr)
+        this->solution = solution;
+    else if (*solution < *this->solution) {
+        delete this->solution;
+        this->solution = solution;
+    } else {
+        delete solution;
+    }
+    if (this->solution->cost == 0) {
+        throw "Found most optimal solution early.";
+    }
 }
 
 void GraphColor::color_vertices(int vertex, int num_vertices) {
     // if all colors are assigned, print the solution
     if (vertex == num_vertices) {
         Solution *s = new Solution(this->k, this->v_colors);
-        if (this->solution == nullptr ||
-                *s < *this->solution) {
-            delete this->solution;
-            this->solution = s;
-        } else {
-            delete s;
-        }
-        if (this->solution->cost == 0) {
-            throw "Found most optimal solution early.";
-        }
+        this->set_solution(s);
         return;
     }
  
@@ -156,16 +182,7 @@ bool GraphColorGreedy::color_vertices_imp(int vertex, int num_vertices) {
     // if all colors are assigned, print the solution
     if (vertex == num_vertices) {
         Solution *s = new Solution(this->k, this->v_colors);
-        if (this->solution == nullptr ||
-                *s < *this->solution) {
-            delete this->solution;
-            this->solution = s;
-        } else {
-            delete s;
-        }
-        if (this->solution->cost == 0) {
-            throw "Found most optimal solution early.";
-        }
+        this->set_solution(s);
         return true;
     }
 

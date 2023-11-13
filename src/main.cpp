@@ -1,5 +1,6 @@
 #include "graph_coloring.h"
 #include "input.h"
+#include "test.h"
 #include <chrono>
 #include <fstream>
 #include <iostream>
@@ -7,7 +8,7 @@
 #define DEBUG
 
 int main(int argc, char *argv[]) {
-    std::ifstream input_file("graph2.txt");
+    std::ifstream input_file("graph4.txt");
     if (!input_file.is_open()) {
         std::cout << "Error opening file" << std::endl;
         return 1;
@@ -18,10 +19,12 @@ int main(int argc, char *argv[]) {
         std::cout << "Error reading graph" << std::endl;
         return 1;
     }
+
     std::cout << "Graph read successfully" << std::endl;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
 #ifdef DEBUG
+    /*
     GraphColor gc = GraphColor(g, k);
     start = std::chrono::high_resolution_clock::now();
     try {
@@ -32,6 +35,7 @@ int main(int argc, char *argv[]) {
     end = std::chrono::high_resolution_clock::now();
     gc.print_solution();
     std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us" << std::endl;
+    */
     GraphColorGreedy gcg = GraphColorGreedy(g, k);
     start = std::chrono::high_resolution_clock::now();
     try {
@@ -43,5 +47,17 @@ int main(int argc, char *argv[]) {
     gcg.print_solution();
     std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us" << std::endl;
 #endif
+    ColorGraph cg = ColorGraph(g, k);
+    start = std::chrono::high_resolution_clock::now();
+    try {
+        cg.color_vertices(0, g.n);
+    } catch (const char * c) {
+        std::cout << c << std::endl;
+    }
+    end = std::chrono::high_resolution_clock::now();
+    cg.print_solution();
+    std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us" << std::endl;
+    bool is_correct = cg.is_solution_safe();
+    std::cout << "Solution is " << (is_correct ? "correct" : "incorrect") << std::endl;
     return 0;
 }
