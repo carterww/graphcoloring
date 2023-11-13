@@ -1,62 +1,65 @@
-#include "graph_coloring.h"
-#include "color_graph.h"
+#include "graph_color.h"
+#include "graph_color_complete.h"
+#include "graph_color_greedy.h"
 #include "input.h"
 #include <chrono>
 #include <fstream>
 #include <iostream>
 
-#define DEBUG
+typedef std::chrono::high_resolution_clock Clock;
+typedef std::chrono::time_point<Clock> TimePoint;
+
+#define GRAPH_COLOR
+#define GRAPH_COLOR_GREEDY
+
+void print_time(TimePoint start, TimePoint end);
 
 int main(int argc, char *argv[]) {
-    std::ifstream input_file("graph4.txt");
-    if (!input_file.is_open()) {
-        std::cout << "Error opening file" << std::endl;
-        return 1;
-    }
-    Graph g = Graph();
-    int k;
-    if (read_graph(input_file, g, k) != 0) {
-        std::cout << "Error reading graph" << std::endl;
+    std::vector<Graph*> graphs;
+    std::vector<int> ks;
+    if (read_graphs(argc, argv, graphs, ks) != 0) {
         return 1;
     }
 
     std::cout << "Graph read successfully" << std::endl;
 
-    std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
-#ifdef DEBUG
-    /*
-    GraphColor gc = GraphColor(g, k);
-    start = std::chrono::high_resolution_clock::now();
-    try {
-        gc.color_vertices(0, g.n);
-    } catch (const char * c) {
-        std::cout << c << std::endl;
+    for (int i = 0; i < graphs.size(); i++) {
+        TimePoint start, end;
+
+        #ifdef GRAPH_COLOR
+        GraphColor gc = GraphColor(*graphs[i], ks[i]);
+        start = Clock::now();
+        try {
+            gc.color_vertices(0, graphs[i]->n);
+        } catch (const char * c) {}
+        end = Clock::now();
+        gc.print_solution();
+        print_time(start, end);
+        #endif
+        
+        #ifdef GRAPH_COLOR_GREEDY
+        GraphColorGreedy gcg = GraphColorGreedy(*graphs[i], ks[i]);
+        start = Clock::now();
+        try {
+            gcg.color_vertices(0, graphs[i]->n);
+        } catch (const char * c) {}
+        end = Clock::now();
+        gcg.print_solution();
+        print_time(start, end);
+        #endif
+
+        GraphColorComplete gcc = GraphColorComplete(*graphs[i], ks[i]);
+        start = Clock::now();
+        try {
+            gcc.color_vertices(0, graphs[i]->n);
+        } catch (const char * c) {}
+        end = Clock::now();
+        gcc.print_solution();
+        print_time(start, end);
     }
-    end = std::chrono::high_resolution_clock::now();
-    gc.print_solution();
-    std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us" << std::endl;
-    */
-    GraphColorGreedy gcg = GraphColorGreedy(g, k);
-    start = std::chrono::high_resolution_clock::now();
-    try {
-        gcg.color_vertices(0, g.n);
-    } catch (const char * c) {
-        std::cout << c << std::endl;
-    }
-    end = std::chrono::high_resolution_clock::now();
-    gcg.print_solution();
-    std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us" << std::endl;
-#endif
-    ColorGraph cg = ColorGraph(g, k);
-    start = std::chrono::high_resolution_clock::now();
-    try {
-        cg.color_vertices(0, g.n);
-    } catch (const char * c) {
-        std::cout << c << std::endl;
-    }
-    end = std::chrono::high_resolution_clock::now();
-    cg.print_solution();
-    std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us" << std::endl;
-    std::cout << "Solution correct: " << cg.is_solution_correct() << std::endl;
     return 0;
+}
+
+void print_time(TimePoint start, TimePoint end) {
+    std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "us" << std::endl;
 }

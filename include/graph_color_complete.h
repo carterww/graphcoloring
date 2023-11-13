@@ -1,26 +1,19 @@
-#ifndef COLOR_GRAPH_H
-#define COLOR_GRAPH_H
+#ifndef GRAPH_COLOR_COMPLETE_H
+#define GRAPH_COLOR_COMPLETE_H
 
 #include "graph.h"
-#include "graph_coloring.h"
+#include "graph_color.h"
+#include "solution.h"
 
-class ColorGraph {
+class GraphColorComplete : public GraphColor {
 public:
-    ColorGraph(Graph &graph, int k);
-    ~ColorGraph();
+    GraphColorComplete(Graph &graph, int k);
+    ~GraphColorComplete();
 
     void color_vertices(int vertex, int num_vertices);
-    void print_solution() const;
-    /* Sanity check to see if the solution is correct at end */
-    bool is_solution_correct() const;
 private:
-    int k;
     /* Best possible solution given the number of vertices and colors */
     int best_solution;
-    Graph *graph;
-    Solution *solution;
-    /* Colors of vertices */
-    std::vector<int> v_colors;
     /* Number of vertices of each color at each step.
      * Used for calculating the cost of the current solution
      * at each step.
@@ -28,10 +21,6 @@ private:
     std::vector<int> color_count;
     std::vector<int> v_pick_order;
 
-    /* Returns true if the vertex can be colored with the given color */
-    bool is_safe(int vertex, int color) const;
-    /* Sets a new solution if the cost is less than the old one */
-    void set_solution(Solution *solution);
     /* Sets the pick order of the vertices */
     void set_pick_order();
     /* Sets the pick order of the vertices in a fast way.
@@ -47,5 +36,4 @@ private:
      */
     void set_pick_order_accurate();
 };
-
 #endif

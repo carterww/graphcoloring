@@ -33,3 +33,26 @@ int read_graph(std::ifstream &filename, Graph &g, int &k) {
     filename.close();
     return 0;
 }
+
+int read_graphs(int argc, char **argv, std::vector<Graph*> &graphs, std::vector<int> &ks) {
+    if (argc < 2) {
+        std::cout << "Usage: " << argv[0] << " <input file> [<input file> ...]" << std::endl;
+        return 1;
+    }
+    for (int i = 1; i < argc; i++) {
+        std::ifstream input_file(argv[i]);
+        if (!input_file.is_open()) {
+            std::cout << "Error opening file " << argv[i] << std::endl;
+            return 1;
+        }
+        Graph *g = new Graph();
+        int k;
+        if (read_graph(input_file, *g, k) != 0) {
+            std::cout << "Error reading graph" << std::endl;
+            return 1;
+        }
+        graphs.push_back(g);
+        ks.push_back(k);
+    }
+    return 0;
+}
