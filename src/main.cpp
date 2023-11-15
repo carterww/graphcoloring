@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
         GraphColorComplete gcc = GraphColorComplete(*graphs[i], ks[i]);
         start = Clock::now();
         try {
-            gcc.color_vertices(0, graphs[i]->n);
+            gcc.color_vertices(0, graphs[i]->n, 0);
         } catch (const char * c) {}
         end = Clock::now();
         gcc.print_solution();

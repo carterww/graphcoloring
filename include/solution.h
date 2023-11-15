@@ -6,6 +6,7 @@
 class Solution {
 public:
     Solution(int k, const std::vector<int> &v_colors);
+    Solution(int k, const std::vector<int> &v_colors, int cost, const std::vector<int> &color_count);
 
     static int get_cost(int k, const std::vector<int> &color_count);
     void print_solution() const;

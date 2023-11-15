@@ -10,8 +10,15 @@ Solution::Solution(int k, const std::vector<int> &v_colors) {
     for (int i = 0; i < v_colors.size(); i++) {
         this->color_use[v_colors[i]]++;
     }
-    
     this->calculate_cost();
+}
+
+
+Solution::Solution(int k, const std::vector<int> &v_colors, int cost, const std::vector<int> &color_count) {
+    this->k = k;
+    this->v_colors = std::vector<int>(v_colors);
+    this->color_use = std::vector<int>(color_count);
+    this->cost = cost;
 }
 
 int Solution::get_cost(int k, const std::vector<int> &color_count) {
@@ -34,11 +41,6 @@ bool Solution::operator<(const Solution &other) const {
 }
 
 void Solution::print_solution() const {
-    /* Need to redesign this class for efficiently storing
-     * the # of times each color is used along with the
-     * verticies grouped by color. Shouldn't be hard I'm just
-     * lazy rn.
-     */
     std::cout << "(";
     for (int i = 1; i < this->color_use.size() - 1; i++) {
         std::cout << this->color_use[i] << ",";

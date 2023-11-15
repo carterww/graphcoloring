@@ -10,7 +10,7 @@ public:
     GraphColorComplete(Graph &graph, int k);
     ~GraphColorComplete();
 
-    void color_vertices(int vertex, int num_vertices);
+    void color_vertices(int vertex, int num_vertices, int cost);
 private:
     /* Number of vertices of each color at each step.
      * Used for calculating the cost of the current solution
@@ -21,5 +21,9 @@ private:
 
     /* Sets the pick order of the vertices */
     void set_pick_order();
+    /* Sets the order of the adjacent vertices 
+     * in each adj list
+     */
+    void set_adj_order();
 };
 #endif

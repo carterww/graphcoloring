@@ -11,6 +11,7 @@ GraphColorComplete::GraphColorComplete(Graph &graph, int k) : GraphColor(graph, 
     this->color_count.resize(k + 1, 0);
     this->v_pick_order.resize(graph.n, 0);
     this->set_pick_order();
+    this->set_adj_order();
 }
 
 void GraphColorComplete::set_pick_order() {
@@ -26,13 +27,35 @@ void GraphColorComplete::set_pick_order() {
     }
 }
 
+void GraphColorComplete::set_adj_order() {
+    std::vector<std::tuple<int, int>> degrees(this->graph->n, std::make_tuple(0, 0));
+    for (int i = 0; i < this->graph->n; i++) {
+        std::get<0>(degrees[i]) = this->graph->adj[i].size();
+        std::get<1>(degrees[i]) = i;
+    }
+    /* Sort the vertices by degree */
+    std::sort(degrees.begin(), degrees.end(), std::greater<std::tuple<int, int>>());
+    for (int i = 0; i < this->graph->n; i++) {
+        std::vector<std::tuple<int, int>> adj_list(this->graph->adj[i].size(), std::make_tuple(0, 0));
+        for (int j = 0; j < this->graph->adj[i].size(); j++) {
+            std::get<0>(adj_list[j]) = std::get<0>(degrees[this->graph->adj[i][j]]);
+            std::get<1>(adj_list[j]) = this->graph->adj[i][j];
+        }
+        /* Sort the adjacent vertices by degree */
+        std::sort(adj_list.begin(), adj_list.end(), std::greater<std::tuple<int, int>>());
+        for (int j = 0; j < this->graph->adj[i].size(); j++) {
+            this->graph->adj[i][j] = std::get<1>(adj_list[j]);
+        }
+    }
+}
+
 GraphColorComplete::~GraphColorComplete() {
     /* Nothing to do here */
 }
 
-void GraphColorComplete::color_vertices(int vertex, int num_vertices) {
+void GraphColorComplete::color_vertices(int vertex, int num_vertices, int cost) {
     if (vertex == num_vertices) {
-        Solution *s = new Solution(this->k, this->v_colors);
+        Solution *s = new Solution(this->k, this->v_colors, cost, this->color_count);
         this->set_solution(s);
         return;
     }
@@ -59,7 +82,7 @@ void GraphColorComplete::color_vertices(int vertex, int num_vertices) {
         safe_colors.pop();
         this->v_colors[this->v_pick_order[vertex]] = color;
         this->color_count[color]++;
-        this->color_vertices(vertex + 1, num_vertices);
+        this->color_vertices(vertex + 1, num_vertices, cost);
         this->color_count[color]--;
         this->v_colors[this->v_pick_order[vertex]] = 0;
     }
