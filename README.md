@@ -76,29 +76,29 @@ This solution inherits the *is_safe()* method from the naive backtracking soluti
 #### Time Complexity Analysis
 The time complexities of operations will be grouped into three subcategories: construction, preprocessing, and coloring. They will then be combined in the last subsection for the total time complexity of the solution. The notation from the Problem Definition will be used along with others described as needed.
 ##### Construction
-1. Reading Graph from File (read_graph): Reading the number of colors and vertices, parsing the adjacency matrix involves O(n^2) operations as each potential edge is processed once for a graph with n vertices.
+1. Reading Graph from File (read_graph): Reading the number of colors and vertices, parsing the adjacency matrix involves O($`n^2`$) operations as each potential edge is processed once for a graph with n vertices.
 2. Initializing GraphColorComplete Object:
    - (set_pick_order): The complexity of resizing the color_count array is O(k)
    - (set_adj_order): The complexity of resizing the v_pick_order array is O(n).
-Overall, the complexity of the Construction category is dominated by the graph reading process. The complexity is O(n^2).
+Overall, the complexity of the Construction category is dominated by the graph reading process. The complexity is O($`n^2`$).
 ##### Preprocessing
 1. Setting Adjacency Order (set_adj_order):
    - Complexity to construct degrees vector is O(n)
-   - Sorting the degrees vector is O(n^2)
-   - Sorting the adjacency list for each vertices is O(n) for the loop over each vertices and O(n^2) for the quicksort of degrees inside the loop. Which results in worst case complexity of O(n^3). Although the average case will be far lower since the degrees will           rarely almost equal the number of vertices.
+   - Sorting the degrees vector is O($`n^2`$)
+   - Sorting the adjacency list for each vertices is O(n) for the loop over each vertices and O($`n^2`$) for the quicksort of degrees inside the loop. Which results in worst case complexity of O($`n^3`$). Although the average case will be far lower since the degrees will rarely almost equal the number of vertices.
 2. Setting Vertex Pick Order (set_pick_order):
    - Complexity to construct degrees vector is O(n)
-   - Sorting the degrees vector is O(n^2)
-Overall, the complexity of the Preprocessing category is dominated by the set_adj_order with a worst case complexity of O(n^3).
+   - Sorting the degrees vector is O($`n^2`$)
+Overall, the complexity of the Preprocessing category is dominated by the set_adj_order with a worst case complexity of O($`n^3`$).
 ##### Coloring
 The main aspect of the Coloring category is the color_vertices recursive function. Here are the major steps of the function and their complexities.
 1. Check for base case: Checking for the base case is O(1)
-2. Loop to find safe colors: is_safe is a function to check if the color all neighboring vertices and has a complexity of O(n). is_safe is ran k color times. Resulting in a complexity of O(n*k).
+2. Loop to find safe colors: is_safe is a function to check if the color all neighboring vertices and has a complexity of O(n). is_safe is ran k color times. Resulting in a complexity of O($`n*k`$).
 3. Priorty Queue construction: Construction of priorty queue is O(k)
 4. Recursive calls: The function is called recursively for each vertex and for each of these it is called recursively again k times. Resulting in k^n recursive calls. For each recursive call steps 1, 2, 3 are ran.
-Overall, the final complexity of the coloring category is determined by the amount of recursive calls k^n, times steps 1, 2, 3. This means the final complexity is (k^n) * (1+(n*k)+(k)).
+Overall, the final complexity of the coloring category is determined by the amount of recursive calls $`k^n`$, times steps 1, 2, 3. This means the final complexity is $`(k^n) * (1+(n*k)+(k))`$.
 ##### Total Complexity
-The total complexity is dominated by the coloring category with a simplified complexity of (k^n)*(nk).
+The total complexity is dominated by the coloring category with a simplified complexity of $`(k^n)*(nk)`$.
 
-[^1]: Quicksort is used. It's worst case O({n^2}), but it's average case is O(nlogn). A worst case O(nlogn) sorting algorithm may be faster, but quicksort is what the STL in C++ uses. It also has O(1) space complexity.
+[^1]: Quicksort is used. It's worst case O(n^2), but it's average case is O(nlogn). A worst case O(nlogn) sorting algorithm may be faster, but quicksort is what the STL in C++ uses. It also has O(1) space complexity.
 [^2]: Faster here does not mean in terms of time complexity, rather, in terms of benchmarks. The time complexity is the same.
