@@ -1,5 +1,7 @@
 # CS 421 Project 2
 ## David Qiu and Carter Williams
+This project iterated on many solutions. Our final solution is described in Heuristical Complete Solution. The others were kept for inheritance and test purposes.
+## Overview
 Given a file with an adjacency matrix, output a color sequence for vertices where no two adjacent vertices can share the same color. Our project involves three solutions that build off each other:
 1. A naive backtracking approach.
 2. A backtracking approach that makes greedy choices at each step.
@@ -30,8 +32,8 @@ This section will be a general overview of the implementations. To see just the 
 - Many classes contain misc. methods that are not mentioned because they do not directly solve the problem. An example of this would be the print_solution() method.
 ### Graph
 A class declared in "graph.h" and defined in "graph.cpp." Represents a graph as a list, adj, of lists. If any vertex, v, shares an edge with another vertex, q, then adj[v] contains q. If undirected, adj[q] contains v. The edges are not ordered in any way because we only iterate over the vertices. Order does not matter in that case. Note: We also use std::vector as adj and the lists inside adj.
-### Naive Backtracking
-This solution is made implemented in the "GraphColor" class. It is declared in "graph_color.h" and defined in "graph_color.cpp." In this section, we will go over the data members, data structures, and algorithms used.
+### Naive Backtracking Solution
+This solution is made implemented in the "GraphColor" class. It is declared in "graph_color.h" and defined in "graph_color.cpp." This solution was our first iteration over the solution. The next two solutions simply improve on this. In this section, we will go over the data members, data structures, and algorithms used.
 #### Data Members
 - *int k*: Number of colors to color the graph with.
 - *Graph graph*: Class representing the graph. Implemented as an adjacency list.
@@ -40,6 +42,42 @@ This solution is made implemented in the "GraphColor" class. It is declared in "
 #### Data Structures
 - *int v_colors[]*: A direct hash table that holds the color of each vertex. If |V| = n, then |v_colors| = n. Allows for quick access to the color of each vertex. Note: this is implemented using std::vector. A direct hash table is used because each vertex needs exactly one spot and the number of vertices will not change.
 #### Algorithms
-- *is_safe(int vertex, int color)*: Checks if the vertex shares the color with any of its adjacent vertices.
-- *color_vertices(int vertex, int num_vertices)*: Recursive function that colors a vertex then calls itself with the next vertex. Once a solution is found, it updates the solution (if it's cost is lower than the current solution) and backtracks. This function is exhaustive, so it will check every color possibility for every vertex. If the new solution's cost is equal to the best_solution, it stops searching for solutions.
-### Greedy Selection
+- *is_safe()*: Checks if the vertex shares the color with any of its adjacent vertices.
+- *color_vertices()*: Recursive function that colors a vertex then calls itself with the next vertex. Once a solution is found, it updates the solution (if it's cost is lower than the current solution) and backtracks. This function is exhaustive, so it will check every color possibility for every vertex. If the new solution's cost is equal to the best_solution, it stops searching for solutions.
+### Greedy Selection Solution
+This solution is implemented in the "GraphColorGreedy" class. It is declared in "graph_color_greedy.h" and defined in "graph_color_greedy.cpp."
+This was our second iteration over the graph coloring solution. It improves on the first solution by greedily choosing the colors at each step based on which minimizes the cost function. If it cannot make a choice that is within a certain cost, it will terminate, increment the cost, and try again. The details of the data members, data structures, and algorithms will be skipped since it is not our final solution.
+### Heuristical Complete Solution
+This solution is implemented in the "GraphColorComplete" class. It is declared int "graph_color_complete.h" and defined in "graph_color_complete.cpp."
+This was our final iteration over the graph coloring solution. It improves on the first solution by implementing heuristcal ways to choose colors and vertices. It also improves on the second solution by ensuring the minimum cost solution is returned.
+#### General Overview
+This section will provide a high level overview of the algorithms. A more thorough analysis will be followed in a later section.
+1. The order the vertices are colored in is changed. The naive solution simply colors the vertices in order. It colors like so: $v_{0}$, $v_{1}$, ..., $v_{n}$. Our solution sorts the vertices on their degree in descending order. This means $v_{0}$ is the vertex with the largest degree.[^1] This does not lower the time complexity, but in some cases it will lead to shorter branches in the coloring decision tree by choosing vertices that affect other vertices the most first.
+2. The order of adjacent vertices in the adjacency list are also sorted by degree. When checking if a color is safe, checking vertices with larger degrees first will likely lead to a failure faster.
+3. A backtracking algorthm is used to color the vertices. This will be explained further in a later section.
+#### Data Structures
+All the data mvembers and data structures from the naive backtracking solution are inherited. The following are also defined:
+- *int color_count[]*: A direct hash table that stores the current number of colors used during the coloring algorithm. It caches the counts so it does not have to be recalculated from *v_colors* during the coloring algorthm. Is used when calculating the cost of picking a color.
+- *int v_pick_order[]*: A direct hash table that stores the order vertices should be colored in. For example, v_pick_order[0] holds the first vertex to be colored.
+#### Algorithms
+This solution inherits the *is_safe()* method from the naive backtracking solution and uses it. The following algorithms are changed and/or added:
+- *set_pick_order()*: Orders the vertices in descending order based on degree.
+- *set_adj_order()*: Goes through every vertex's adjacency list and orders the vertices based on degree.
+- *color_vertices()*: A recursive function that colors a vertex and calls itself. If it tries all colors at the current iteration, it backtracks. It works in the following steps:
+    1. If the current iteration number is the same as the number of vertices, a solution is found.
+        - Calculated the cost of the solution. If it is lower than the current solution, update it. If the cost equals *best_solution*, then return from all the recursive calls.
+        - Backtracks otherwise.
+    2. Iterate through all the colors, k. If the color c can be used (no adjacent vertices have it) add it to an array. Also, calculate the cost of the current colors including c. Make that cost the key.
+    3. Heapify that array such that the lowest cost color is at the top.
+    4. Extract the min color from the heap and color the current vertex with it.
+    5. Color the next vertex.
+    6. Once (5) returns, uncolor the vertex and try the next.
+    This solution makes the best color choices first by picking the colors that keep the cost the lowest. This, along with the other heuristics described, makes for a faster solution[^2] than the naive approach while still returning the lowest cost solution everytime.
+#### Time Complexity Analysis
+The time complexities of operations will be grouped into three subcategories: construction, preprocessing, and coloring. They will then be combined in the last subsection for the total time complexity of the solution. The notation from the Problem Definition will be used along with others described as needed.
+##### Construction
+##### Preprocessing
+##### Coloring
+
+[^1]: Quicksort is used. It's worst case $O({n^2})$, but it's average case is $O(nlogn)$. A worst case $O(nlogn)$ sorting algorithm may be faster, but quicksort is what the STL in C++ uses. It also has $O(1)$ space complexity.
+[^2]: Faster here does not mean in terms of time complexity, rather, in terms of benchmarks. The time complexity is the same.
