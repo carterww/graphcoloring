@@ -76,14 +76,16 @@ This solution inherits the *is_safe()* method from the naive backtracking soluti
 #### Time Complexity Analysis
 The time complexities of operations will be grouped into three subcategories: construction, preprocessing, and coloring. They will then be combined in the last subsection for the total time complexity of the solution. The notation from the Problem Definition will be used along with others described as needed.
 ##### Construction
-1. Reading Graph from File: Reading the number of colors and vertices, parsing the adjacency matrix involves O(n^2) operations as each potential edge is processed once for a graph with n vertices.
-2. Initializing GraphColorComplete Object: The complexity of resizing the color_count array is O(k), and for the v_pick_order array, it is O(n).
+1. Reading Graph from File (read_graph): Reading the number of colors and vertices, parsing the adjacency matrix involves O(n^2) operations as each potential edge is processed once for a graph with n vertices.
+2. Initializing GraphColorComplete Object:
+   - (set_pick_order): The complexity of resizing the color_count array is O(k)
+   - (set_adj_order): The complexity of resizing the v_pick_order array is O(n).
 Overall, the complexity of the Construction category is dominated by the graph reading process. The complexity is O(n^2).
 ##### Preprocessing
 1. Setting Adjacency Order (set_adj_order):
    - Complexity to construct degrees vector is O(n)
    - Sorting the degrees vector is O(n^2)
-   - Sorting the adjacency list for each vertices is O(n) for the loop over each vertices and O(n^2) for the quicksort of degrees inside the loop. Which results in worst case complexity of O(n^3). Although the average case will be far lower since the degrees will            rarely almost equal the number of vertices.
+   - Sorting the adjacency list for each vertices is O(n) for the loop over each vertices and O(n^2) for the quicksort of degrees inside the loop. Which results in worst case complexity of O(n^3). Although the average case will be far lower since the degrees will           rarely almost equal the number of vertices.
 2. Setting Vertex Pick Order (set_pick_order):
    - Complexity to construct degrees vector is O(n)
    - Sorting the degrees vector is O(n^2)
