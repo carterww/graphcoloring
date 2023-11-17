@@ -6,9 +6,9 @@ Given a file with an adjacency matrix, output a color sequence for vertices wher
 3. A backtracking approach that makes greedy choices at each step, but is exhaustive. It will check all possible solutions until the min possible cost is achieved.
 ### Problem Definiton
 Given a graph G with vertices V and edges E, color each vertex so that adjacent vertices do not share the same color. Given a set of solutions S, output the solution that minimizes the following equation:
-$$
-\sum_{i=1} ^{k - 1} |c_{i}-c_{i + 1}|
-$$
+``` math
+\sum_{i=1}^{k - 1} |c_{i}-c_{i + 1}|
+```
 Where k is the number of colors and c is the number of vertices with that color. The value ouputted from this equation for any given solution will be the "cost" of the solution.
 ### Compiling
 - If make is installed, use that.
