@@ -6,22 +6,28 @@
 #include <fstream>
 #include <iostream>
 
+/* Shortened time related types */
 typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::time_point<Clock> TimePoint;
 
-#define ALL
+/* Define this to run all three algorithms.
+ * Otherwise, only our final solution will run.
+ */
+//#define ALL
 
 void print_time(TimePoint start, TimePoint end);
 
 int main(int argc, char *argv[]) {
     std::vector<Graph*> graphs;
     std::vector<int> ks;
+    /* Read graphs from args */
     if (read_graphs(argc, argv, graphs, ks) != 0) {
         return 1;
     }
 
     std::cout << "Graph read successfully" << std::endl;
 
+    /* Color all graphs */
     for (int i = 0; i < graphs.size(); i++) {
         std::cout << "FILE: " << argv[i + 1] << std::endl;
         TimePoint start, end;
@@ -38,9 +44,6 @@ int main(int argc, char *argv[]) {
         gc.print_solution();
         print_time(start, end);
         std::cout << "------------------------------------------" << std::endl;
-        #endif
-        
-        #ifdef ALL
         std::cout << "Greedy graph coloring" << std::endl;
         std::cout << "------------------------------------------" << std::endl;
         GraphColorGreedy gcg = GraphColorGreedy(*graphs[i], ks[i]);
@@ -54,10 +57,11 @@ int main(int argc, char *argv[]) {
         std::cout << "------------------------------------------" << std::endl;
         #endif
 
-        std::cout << "Heuristic graph coloring" << std::endl;
+        std::cout << "Our Final Graph Coloring Solution" << std::endl;
         std::cout << "------------------------------------------" << std::endl;
         GraphColorComplete gcc = GraphColorComplete(*graphs[i], ks[i]);
         start = Clock::now();
+        /* Error is thrown if a solution is found early */
         try {
             gcc.color_vertices(0, graphs[i]->n, 0);
         } catch (const char * c) {}

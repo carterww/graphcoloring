@@ -10,6 +10,10 @@ public:
     GraphColorComplete(Graph &graph, int k);
     ~GraphColorComplete();
 
+    /* Backtracking algorithm to color the graph.
+     * This version uses heuristics to pick the next vertex and color, but
+     * is not greedy.
+     */
     void color_vertices(int vertex, int num_vertices, int cost);
 private:
     /* Number of vertices of each color at each step.
@@ -17,6 +21,7 @@ private:
      * at each step.
      */
     std::vector<int> color_count;
+    /* Order in which the vertices are picked */
     std::vector<int> v_pick_order;
 
     /* Sets the pick order of the vertices */

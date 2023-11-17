@@ -15,6 +15,9 @@ GraphColor::~GraphColor() {
         delete this->solution;
 }
 
+/* Check if vertex can be colored with color by
+ * checking if any of its neighbors have the same color.
+ */
 bool GraphColor::is_safe(int vertex, int color) const {
     for (int u : this->graph->adj[vertex])
     {
@@ -26,6 +29,7 @@ bool GraphColor::is_safe(int vertex, int color) const {
     return true;
 }
 
+/* Sanity check to see if the solution is correct at end */
 bool GraphColor::is_solution_correct() const {
     if (this->solution == nullptr)
         return false;
@@ -53,31 +57,32 @@ void GraphColor::set_solution(Solution *solution) {
     } else {
         delete solution;
     }
+    /* If no better solution is possible given |V| and k,
+     * then we can stop early.
+     */
     if (this->solution->cost == this->best_solution) {
         throw "Found most optimal solution early.";
     }
 }
 
 void GraphColor::color_vertices(int vertex, int num_vertices) {
-    // if all colors are assigned, print the solution
+    /* If all vertices are colored, then we have a solution */
     if (vertex == num_vertices) {
         Solution *s = new Solution(this->k, this->v_colors);
         this->set_solution(s);
-        return;
+        return; /* Backtrack */
     }
  
-    // try all possible combinations of available colors
+    /* Try all possible colors for vertex */
     for (int c = 1; c <= k; c++) {
-        // if it is safe to assign color `c` to vertex `v`
         if (this->is_safe(vertex, c)) {
-            // assign color `c` to vertex `v`
             this->v_colors[vertex] = c;
- 
-            // recur for the next vertex
+            /* Recursively color the rest of the vertices */
             this->color_vertices(vertex + 1, num_vertices);
- 
-            // backtrack
             this->v_colors[vertex] = 0;
         }
     }
+    /* If we end up here, then we tried all colors, so
+     * we can backtrack.
+     */
 }

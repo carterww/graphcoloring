@@ -3,6 +3,11 @@
 #include <sstream>
 #include <string>
 
+/* Reads the graph from the input file.
+ * The first line contains the number of colors.
+ * The second line contains the number of vertices.
+ * The next n lines contain the adjacency matrix.
+ */
 int read_graph(std::ifstream &filename, Graph &g, int &k) {
     std::string line;
 
@@ -34,6 +39,9 @@ int read_graph(std::ifstream &filename, Graph &g, int &k) {
     return 0;
 }
 
+/* Reads multiple graphs from multiple input files. 
+ * Allows for easy testing of multiple graphs at once.
+ */
 int read_graphs(int argc, char **argv, std::vector<Graph*> &graphs, std::vector<int> &ks) {
     if (argc < 2) {
         std::cout << "Usage: " << argv[0] << " <input file> [<input file> ...]" << std::endl;

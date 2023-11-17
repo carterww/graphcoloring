@@ -2,20 +2,21 @@
 #define GRAPH_H
 #include <vector>
 
-// Data structure to store a graph edge
+/* Data structure to store a graph edge */
 struct Edge {
     int src, dest;
 };
 
-// A class to represent a graph object
+/* A class to represent a graph object.
+ * Implementation using adjacency list
+ */
 class Graph
 {
 public:
-    // a vector of vectors to represent an adjacency list
+    /* a vector of vectors to represent an adjacency list */
     std::vector<std::vector<int>> adj;
     int n;
  
-    // Constructor
     Graph();
     Graph(int n);
 

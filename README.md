@@ -52,7 +52,7 @@ This solution is implemented in the "GraphColorComplete" class. It is declared i
 This was our final iteration over the graph coloring solution. It improves on the first solution by implementing heuristcal ways to choose colors and vertices. It also improves on the second solution by ensuring the minimum cost solution is returned.
 #### General Overview
 This section will provide a high level overview of the algorithms. A more thorough analysis will be followed in a later section.
-1. The order the vertices are colored in is changed. The naive solution simply colors the vertices in order. It colors like so: $v_{0}$, $v_{1}$, ..., $v_{n}$. Our solution sorts the vertices on their degree in descending order. This means $v_{0}$ is the vertex with the largest degree.[^1] This does not lower the time complexity, but in some cases it will lead to shorter branches in the coloring decision tree by choosing vertices that affect other vertices the most first.
+1. The order the vertices are colored in is changed. The naive solution simply colors the vertices in order. It colors like so: $`v_{0}`$, $`v_{1}`$, ..., $`v_{n}`$. Our solution sorts the vertices on their degree in descending order. This means $`v_{0}`$ is the vertex with the largest degree.[^1] This does not lower the time complexity, but in some cases it will lead to shorter branches in the coloring decision tree by choosing vertices that affect other vertices the most first.
 2. The order of adjacent vertices in the adjacency list are also sorted by degree. When checking if a color is safe, checking vertices with larger degrees first will likely lead to a failure faster.
 3. A backtracking algorthm is used to color the vertices. This will be explained further in a later section.
 #### Data Structures
