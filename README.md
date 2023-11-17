@@ -21,7 +21,7 @@ Where k is the number of colors and c is the number of vertices with that color.
 - Check the various "graph.txt" files in the working directory to see how an input file should be formatted. The file should be made up of:
     1. The number of colors, k, on the first line.
     2. The number of vertices, |V|, on the second line.
-    3. An adjacency matrix where a "1" means there is an edge, and a "0" means there is no edge between $V_{i}$ and $V_{j}$.
+    3. An adjacency matrix where a "1" means there is an edge, and a "0" means there is no edge between $`V_{i}`$ and $`V_{j}`$.
         - Directed graphs are supported.
         - Ensure both [i][j] and [j][i] have a "1" if the graph is undirected.
 - Specify input file(s) by passing the file names as arguments. Example: "./a.out graph1.txt graph2.txt ... graphn.txt"
@@ -79,5 +79,5 @@ The time complexities of operations will be grouped into three subcategories: co
 ##### Preprocessing
 ##### Coloring
 
-[^1]: Quicksort is used. It's worst case $O({n^2})$, but it's average case is $O(nlogn)$. A worst case $O(nlogn)$ sorting algorithm may be faster, but quicksort is what the STL in C++ uses. It also has $O(1)$ space complexity.
+[^1]: Quicksort is used. It's worst case O({n^2}), but it's average case is O(nlogn). A worst case O(nlogn) sorting algorithm may be faster, but quicksort is what the STL in C++ uses. It also has O(1) space complexity.
 [^2]: Faster here does not mean in terms of time complexity, rather, in terms of benchmarks. The time complexity is the same.
