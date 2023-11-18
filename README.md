@@ -1,6 +1,6 @@
 # CS 421 Project 2
 ## David Qiu and Carter Williams
-This project iterated on many solutions. Our final solution is described in Heuristical Complete Solution. The others were kept for inheritance and test purposes.
+This project iterated on many solutions. Our final solution is the Heuristical Complete Solution. The others were kept for inheritance and testing purposes.
 ## Overview
 Given a file with an adjacency matrix, output a color sequence for vertices where no two adjacent vertices can share the same color. Our project involves three solutions that build off each other:
 1. A naive backtracking approach.
