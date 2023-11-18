@@ -13,4 +13,6 @@
  */
 int read_graph(std::ifstream &filename, Graph &graph, int &k);
 
+int read_graphs(int argc, char *argv[], std::vector<Graph*> &graphs, std::vector<int> &ks);
+
 #endif
