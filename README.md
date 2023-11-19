@@ -17,6 +17,7 @@ Where k is the number of colors and c is the number of vertices with that color.
 - Check the "Makefile" for a simple way to compile.
 - Ensure the "./include" directory is included when compiling.
 - In "main.cpp," there is a macro, "ALL," that outputs the solution for each graph with each implementation. To only output the main implementation, remove this definition.
+- "g++ -I./include -std=c++11 -o main.exe ./src/*.cpp"
 ### Running the Program
 - Check the various "graph.txt" files in the working directory to see how an input file should be formatted. The file should be made up of:
     1. The number of colors, k, on the first line.
